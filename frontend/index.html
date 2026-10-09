@@ -1,1 +1,182 @@
-<!-- TEAM NIRVA frontend files -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TEAM NIRVA — Visual Quality Intelligence</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 2 30 16 16 30 2 16Z" fill="none" stroke="#C6FF00" stroke-width="1.5" />
+        <path d="M16 9 23 16 16 23 9 16Z" fill="#C6FF00" />
+      </svg>
+      <div>
+        <div class="brand-name">TEAM NIRVA</div>
+        <div class="brand-sub">VISUAL QUALITY INTELLIGENCE</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-online"><span class="dot" aria-hidden="true"></span>SYSTEM ONLINE</span>
+      <span class="chip chip-demo" id="mode-chip">DEMO MODE</span>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- ===== INTRODUCTION ===== -->
+    <section class="intro">
+      <h1>Inspect your product.</h1>
+      <p>Upload a product image to evaluate its quality and identify potential manufacturing defects.</p>
+    </section>
+
+    <!-- ===== INSPECTION WORKSPACE ===== -->
+    <section class="workspace" aria-label="Inspection workspace">
+
+      <!-- LEFT PANEL: PRODUCT IMAGE -->
+      <article class="panel" id="image-panel" aria-labelledby="image-heading">
+        <h2 class="panel-label" id="image-heading">PRODUCT IMAGE</h2>
+
+        <!-- Empty state: drag-and-drop area -->
+        <div class="dropzone" id="dropzone">
+          <svg class="icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 32V10m0 0-8 8m8-8 8 8M8 34v4h32v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <p class="drop-title">Drag &amp; drop an image here</p>
+          <p class="muted small">or</p>
+          <button type="button" class="btn btn-primary" id="browse-button">Browse Images</button>
+          <p class="muted small">Supported: JPG, JPEG, PNG, WEBP · Max 10 MB</p>
+          <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" hidden aria-label="Choose a product image" />
+        </div>
+
+        <!-- Preview state -->
+        <div class="preview" id="preview" hidden>
+          <div class="preview-stage">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="image-frame">
+              <img id="preview-image" alt="Uploaded product preview" />
+              <div class="scan-line" id="scan-line" hidden></div>
+              <div class="marker" id="defect-marker" hidden><span>ILLUSTRATIVE MARKER</span></div>
+            </div>
+          </div>
+          <div class="file-meta">
+            <div class="file-info">
+              <div class="file-name" id="file-name">—</div>
+              <div class="muted small" id="file-dimensions">—</div>
+            </div>
+            <button type="button" class="btn btn-ghost" id="remove-button">Remove image</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- RIGHT PANEL: INSPECTION RESULT -->
+      <article class="panel" aria-labelledby="result-heading">
+        <h2 class="panel-label" id="result-heading">INSPECTION RESULT</h2>
+
+        <!-- Idle state -->
+        <div class="state" id="state-idle">
+          <svg class="icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M6 16V8h8M34 8h8v8M42 32v8h-8M14 40H6v-8M4 24h40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3 class="state-title">AWAITING SPECIMEN</h3>
+          <p class="muted">Upload a product image to begin inspection.</p>
+          <p class="engine-ready"><span class="dot" aria-hidden="true"></span>INSPECTION ENGINE READY</p>
+          <button type="button" class="btn btn-primary" id="analyze-button" disabled>Analyze Product</button>
+        </div>
+
+        <!-- Running state -->
+        <div class="state" id="state-running" hidden>
+          <h3 class="state-title">ANALYZING…</h3>
+          <div class="progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Inspection progress">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <ol class="stages" id="stages" aria-live="polite">
+            <li>IMAGE ACQUISITION</li>
+            <li>SURFACE SCAN</li>
+            <li>QUALITY ANALYSIS</li>
+          </ol>
+        </div>
+
+        <!-- Result state -->
+        <div class="state result" id="state-result" hidden>
+          <div class="result-top">
+            <span class="metric-label">CLASSIFICATION</span>
+            <div class="classification" id="result-classification" tabindex="-1">—</div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric wide">
+              <span class="metric-label">CONFIDENCE</span>
+              <strong id="result-confidence">0%</strong>
+              <div class="confidence-track">
+                <div class="confidence-fill" id="confidence-fill"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">SEVERITY</span>
+              <strong id="result-severity">—</strong>
+            </div>
+            <div class="metric">
+              <span class="metric-label">INSPECTION ID</span>
+              <strong id="result-id">—</strong>
+            </div>
+            <div class="metric wide">
+              <span class="metric-label">PROCESSING MODE</span>
+              <strong id="result-mode">SIMULATED</strong>
+            </div>
+          </div>
+
+          <p class="explanation" id="result-explanation"></p>
+          <p class="disclaimer" id="result-disclaimer" role="note">Demo prediction only. Not generated by a trained AI model.</p>
+          <button type="button" class="btn btn-primary" id="reset-button">Inspect Another Image</button>
+        </div>
+
+        <!-- Error state -->
+        <div class="state" id="state-error" hidden>
+          <h3 class="state-title error-title">INSPECTION FAILED</h3>
+          <p class="muted" id="error-message">Something went wrong.</p>
+          <button type="button" class="btn btn-primary" id="retry-button">Try Again</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===== INSPECTION HISTORY ===== -->
+    <section class="panel history" id="history-panel" aria-labelledby="history-heading">
+      <div class="history-head">
+        <h2 class="panel-label" id="history-heading">INSPECTION HISTORY</h2>
+        <div class="history-tools">
+          <span class="chip" id="history-count">0 RECORDS</span>
+          <button type="button" class="btn btn-ghost btn-small" id="clear-history-button" disabled>Clear history</button>
+        </div>
+      </div>
+
+      <p class="history-empty muted" id="history-empty">No inspections yet. Completed inspections will appear here.</p>
+      <ul class="history-list" id="history-list" aria-label="Previously inspected images"></ul>
+      <p class="muted small history-note">Saved in this browser only. The latest 20 inspections are kept.</p>
+    </section>
+  </main>
+
+  <!-- ===== STATUS BAR + FOOTER ===== -->
+  <footer class="site-footer">
+    <ul class="status-bar" aria-label="System status">
+      <li>IMAGE PROCESSING — <b id="status-image">READY</b></li>
+      <li>INSPECTION ENGINE — <b id="status-engine">DEMO MODE</b></li>
+      <li>API CONNECTION — <b id="status-api">NOT CONNECTED</b></li>
+    </ul>
+    <div class="footer-line">
+      <span>TEAM NIRVA © 2026</span>
+      <span>BUILT BY TEAM NIRVA</span>
+    </div>
+  </footer>
+
+  <!-- Toast notifications appear here -->
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
