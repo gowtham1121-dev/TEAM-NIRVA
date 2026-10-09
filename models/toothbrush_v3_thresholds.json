@@ -1,0 +1,17 @@
+{
+  "tau_low": 1.9294599294662476,
+  "tau_high": 1.9294599294662476,
+  "cost_setting": "escapes cost 10x",
+  "c_escape": 10,
+  "c_false_reject": 2,
+  "c_review": 1,
+  "defect_rate": 0.05,
+  "backbone": "resnet18",
+  "image_size": 384,
+  "coreset_ratio": 0.05,
+  "starter_tau_low": 1.91693890504767,
+  "starter_tau_high": 2.1641218903209665,
+  "scoring": "max heat inside brush region",
+  "region_margin": 0.04,
+  "model_file": "toothbrush_v1.pt"
+}
